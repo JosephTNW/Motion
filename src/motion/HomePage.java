@@ -1,0 +1,487 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package motion;
+
+import Custom.CustomTreeCellRenderer;
+import Models.Project;
+import java.awt.CardLayout;
+import java.awt.Image;
+import java.util.ArrayList;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+/**
+ *
+ * @author josep
+ */
+public class HomePage extends javax.swing.JFrame {
+
+    private CurrUser user;
+    private String selectedLeaf;
+
+    /**
+     * Creates new form HomePage
+     */
+    public HomePage() {
+        initComponents();
+        HomeSideBar.setCellRenderer(new CustomTreeCellRenderer());
+        getIcon();
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        loadProjects();
+        setUpTree();
+    }
+
+    
+
+    private void loadProjects() {
+        CardLayout cardLayout = (CardLayout) MainPane.getLayout();
+
+        ArrayList<Project> projects = ProjectAction.getUserProject(user.loadUserInfo());
+        if (projects.isEmpty()) {
+            scaleImg();
+            cardLayout.show(MainPane, "DefaultPane");
+        } else {
+            cardLayout.show(MainPane, "ProjectPane");
+            int i = 0;
+            for (Project project : projects) {
+                ProjectListPane projList = new ProjectListPane(project, this);
+                ProjectPane.add(projList);
+                i++;
+            }
+        }
+    }
+
+    private void loadProjects(String status) {
+        CardLayout cardLayout = (CardLayout) MainPane.getLayout();
+
+        switch (status) {
+            case "Overview" -> {
+                scaleImg();
+                cardLayout.show(MainPane, "DefaultPane");
+                tvDescription.setText("Why don't you try making a project?");
+            }
+            case "All Projects" ->
+                updateProjects();
+            default -> {
+                ArrayList<Project> projects;
+                if ("History".equals(status)) {
+                    projects = ProjectAction.getFilteredProject(user.loadUserInfo(), "Completed", "Overdue");
+                } else {
+                    projects = ProjectAction.getFilteredProject(user.loadUserInfo(), status);
+                }
+                if (projects.isEmpty()) {
+                    scaleImg();
+                    cardLayout.show(MainPane, "DefaultPane");
+                    tvDescription.setText("You do not have any " + status + " project yet.");
+                } else {
+                    cardLayout.show(MainPane, "ProjectPane");
+                    int i = 0;
+                    for (Project project : projects) {
+                        ProjectListPane projList = new ProjectListPane(project, this);
+                        ProjectPane.add(projList);
+                        i++;
+                    }
+                }
+            }
+        }
+    }
+
+    public void updateProjects() {
+        ProjectPane.removeAll();
+        ProjectPane.revalidate();
+        ProjectPane.repaint();
+
+        loadProjects();
+    }
+
+    public void updateProjects(String status) {
+        ProjectPane.removeAll();
+        ProjectPane.revalidate();
+        ProjectPane.repaint();
+
+        this.selectedLeaf = status;
+        loadProjects(status);
+    }
+
+    public void displayFrame(JInternalFrame frame) {
+        HomeDesktopPane.add(frame);
+        frame.setVisible(true);
+    }
+
+    private void setUpTree() {
+        HomeSideBar.addTreeSelectionListener(new TreeSelectionListener() {
+            @Override
+            public void valueChanged(TreeSelectionEvent e) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) HomeSideBar.getLastSelectedPathComponent();
+                if (node != null && node.isLeaf()) {
+                    String selectedChild = node.toString();
+                    // do something with the selected child
+                    updateProjects(selectedChild);
+                }
+            }
+
+        });
+    }
+
+    public void setUser(CurrUser user) {
+        this.user = user;
+    }
+
+    private void scaleImg() {
+        ImageIcon icon = new ImageIcon("assets\\onBoarding.png");
+        Image img = icon.getImage();
+        Image imgScale = img.getScaledInstance(tvOnBoarding.getWidth(), tvOnBoarding.getHeight(), Image.SCALE_SMOOTH);
+        ImageIcon scaledImg = new ImageIcon(imgScale);
+        tvOnBoarding.setIcon(scaledImg);
+    }
+
+    private void getIcon() {
+        ImageIcon icon = new ImageIcon("assets\\motion.jpg");
+        Image img = icon.getImage();
+        this.setIconImage(img);
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jSplitPane1 = new javax.swing.JSplitPane();
+        HomeScrollPanel = new javax.swing.JScrollPane();
+        HomeSideBar = new javax.swing.JTree();
+        ProjectScrollPane = new javax.swing.JScrollPane();
+        RightPane = new javax.swing.JPanel();
+        HomeDesktopPane = new javax.swing.JDesktopPane();
+        MainPane = new javax.swing.JPanel();
+        DefaultPane = new javax.swing.JPanel();
+        tvDescription = new javax.swing.JLabel();
+        tvNewProject = new javax.swing.JLabel();
+        tvOnBoarding = new javax.swing.JLabel();
+        ProjectPane = new javax.swing.JPanel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        File = new javax.swing.JMenu();
+        mnNewProj = new javax.swing.JMenuItem();
+        mnLogOut = new javax.swing.JMenuItem();
+        mnSaveLog = new javax.swing.JCheckBoxMenuItem();
+        About = new javax.swing.JMenu();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(1000, 1000));
+        setMinimumSize(new java.awt.Dimension(1000, 1000));
+        setSize(new java.awt.Dimension(1000, 1000));
+
+        jSplitPane1.setMaximumSize(new java.awt.Dimension(1000, 500));
+        jSplitPane1.setMinimumSize(new java.awt.Dimension(1000, 500));
+        jSplitPane1.setOneTouchExpandable(true);
+        jSplitPane1.setPreferredSize(new java.awt.Dimension(1000, 500));
+
+        HomeScrollPanel.setBackground(new java.awt.Color(27, 24, 55));
+        HomeScrollPanel.setMaximumSize(new java.awt.Dimension(200, 1080));
+        HomeScrollPanel.setMinimumSize(new java.awt.Dimension(200, 1080));
+        HomeScrollPanel.setPreferredSize(new java.awt.Dimension(200, 1080));
+
+        HomeSideBar.setBackground(new java.awt.Color(248, 248, 248));
+        HomeSideBar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        HomeSideBar.setForeground(new java.awt.Color(255, 255, 255));
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Your Projects");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Overview");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("All Projects");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Ongoing");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Completed");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Overdue");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("History");
+        treeNode1.add(treeNode2);
+        HomeSideBar.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        HomeScrollPanel.setViewportView(HomeSideBar);
+
+        jSplitPane1.setLeftComponent(HomeScrollPanel);
+
+        ProjectScrollPane.setBackground(new java.awt.Color(248, 248, 248));
+        ProjectScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        ProjectScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        ProjectScrollPane.setMaximumSize(new java.awt.Dimension(500, 500));
+        ProjectScrollPane.setName("ProjectScrollPane"); // NOI18N
+        ProjectScrollPane.setPreferredSize(new java.awt.Dimension(500, 500));
+        ProjectScrollPane.setViewportView(ProjectPane);
+
+        RightPane.setMaximumSize(new java.awt.Dimension(1652, 1002));
+        RightPane.setMinimumSize(new java.awt.Dimension(1652, 1002));
+        RightPane.setPreferredSize(new java.awt.Dimension(1652, 1002));
+
+        HomeDesktopPane.setBackground(new java.awt.Color(248, 248, 248));
+        HomeDesktopPane.setMaximumSize(new java.awt.Dimension(1920, 1080));
+        HomeDesktopPane.setMinimumSize(new java.awt.Dimension(1720, 1080));
+        HomeDesktopPane.setName("JDesktopPane"); // NOI18N
+        HomeDesktopPane.setPreferredSize(new java.awt.Dimension(1605, 1080));
+
+        MainPane.setLayout(new java.awt.CardLayout());
+
+        DefaultPane.setBackground(new java.awt.Color(248, 248, 248));
+        DefaultPane.setMaximumSize(new java.awt.Dimension(1720, 1080));
+        DefaultPane.setMinimumSize(new java.awt.Dimension(1720, 1080));
+        DefaultPane.setPreferredSize(new java.awt.Dimension(1720, 1080));
+
+        tvDescription.setBackground(new java.awt.Color(248, 248, 248));
+        tvDescription.setFont(new java.awt.Font("Trebuchet MS", 1, 18)); // NOI18N
+        tvDescription.setForeground(new java.awt.Color(27, 24, 55));
+        tvDescription.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        tvDescription.setText("Motion is your personal Project Management App");
+
+        tvNewProject.setFont(new java.awt.Font("Trebuchet MS", 1, 14)); // NOI18N
+        tvNewProject.setForeground(new java.awt.Color(51, 204, 255));
+        tvNewProject.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        tvNewProject.setText("Create New Project");
+        tvNewProject.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        tvNewProject.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                tvNewProjectMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                tvNewProjectMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                tvNewProjectMouseReleased(evt);
+            }
+        });
+
+        tvOnBoarding.setBackground(new java.awt.Color(27, 24, 55));
+        tvOnBoarding.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        javax.swing.GroupLayout DefaultPaneLayout = new javax.swing.GroupLayout(DefaultPane);
+        DefaultPane.setLayout(DefaultPaneLayout);
+        DefaultPaneLayout.setHorizontalGroup(
+            DefaultPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(DefaultPaneLayout.createSequentialGroup()
+                .addGap(396, 396, 396)
+                .addGroup(DefaultPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tvOnBoarding, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tvDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tvNewProject, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        DefaultPaneLayout.setVerticalGroup(
+            DefaultPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(DefaultPaneLayout.createSequentialGroup()
+                .addGap(75, 75, 75)
+                .addComponent(tvOnBoarding, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(tvDescription)
+                .addGap(9, 9, 9)
+                .addComponent(tvNewProject)
+                .addContainerGap(387, Short.MAX_VALUE))
+        );
+
+        MainPane.add(DefaultPane, "DefaultPane");
+
+        ProjectPane.setBackground(new java.awt.Color(248, 248, 248));
+        ProjectPane.setAlignmentX(0.0F);
+        ProjectPane.setAlignmentY(0.0F);
+        ProjectPane.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        ProjectPane.setMaximumSize(new java.awt.Dimension(500, 500));
+        ProjectPane.setPreferredSize(new java.awt.Dimension(500, 500));
+        ProjectPane.setLayout(new java.awt.GridBagLayout());
+        MainPane.add(ProjectPane, "ProjectPane");
+
+        HomeDesktopPane.setLayer(MainPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout HomeDesktopPaneLayout = new javax.swing.GroupLayout(HomeDesktopPane);
+        HomeDesktopPane.setLayout(HomeDesktopPaneLayout);
+        HomeDesktopPaneLayout.setHorizontalGroup(
+            HomeDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HomeDesktopPaneLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(MainPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        HomeDesktopPaneLayout.setVerticalGroup(
+            HomeDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HomeDesktopPaneLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(MainPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout RightPaneLayout = new javax.swing.GroupLayout(RightPane);
+        RightPane.setLayout(RightPaneLayout);
+        RightPaneLayout.setHorizontalGroup(
+            RightPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(HomeDesktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1652, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        RightPaneLayout.setVerticalGroup(
+            RightPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(HomeDesktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1002, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        ProjectScrollPane.setViewportView(RightPane);
+
+        jSplitPane1.setRightComponent(ProjectScrollPane);
+
+        jMenuBar1.setBackground(new java.awt.Color(27, 24, 55));
+
+        File.setText("File");
+        File.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FileActionPerformed(evt);
+            }
+        });
+
+        mnNewProj.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        mnNewProj.setText("New Project");
+        mnNewProj.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnNewProjActionPerformed(evt);
+            }
+        });
+        File.add(mnNewProj);
+
+        mnLogOut.setText("Log Out");
+        mnLogOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnLogOutActionPerformed(evt);
+            }
+        });
+        File.add(mnLogOut);
+
+        mnSaveLog.setSelected(true);
+        mnSaveLog.setText("Keep Logged In");
+        mnSaveLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnSaveLogActionPerformed(evt);
+            }
+        });
+        File.add(mnSaveLog);
+
+        jMenuBar1.add(File);
+
+        About.setText("About");
+        About.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AboutMouseClicked(evt);
+            }
+        });
+        About.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AboutActionPerformed(evt);
+            }
+        });
+        jMenuBar1.add(About);
+
+        setJMenuBar(jMenuBar1);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 977, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void tvNewProjectMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tvNewProjectMouseEntered
+        // TODO add your handling code here:
+        tvNewProject.setText("<html><u>Create New Project</u></html>");
+    }//GEN-LAST:event_tvNewProjectMouseEntered
+
+    private void tvNewProjectMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tvNewProjectMouseExited
+        // TODO add your handling code here:
+        tvNewProject.setText("Create New Project");
+    }//GEN-LAST:event_tvNewProjectMouseExited
+
+    private void tvNewProjectMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tvNewProjectMouseReleased
+        // TODO add your handling code here:
+        InputProjectPage inputProject = new InputProjectPage(this);
+        HomeDesktopPane.add(inputProject);
+        inputProject.setVisible(true);
+    }//GEN-LAST:event_tvNewProjectMouseReleased
+
+    private void mnLogOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnLogOutActionPerformed
+        CurrUser.deleteCurrUser();
+        LoginPage lPage = new LoginPage();
+        lPage.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_mnLogOutActionPerformed
+
+    private void FileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FileActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FileActionPerformed
+
+    private void mnSaveLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnSaveLogActionPerformed
+        if (mnSaveLog.isSelected()) {
+            user.saveUserInfo(user.getUsername(), user.getEmail());
+        } else {
+            user.deleteCurrUser();
+        }
+    }//GEN-LAST:event_mnSaveLogActionPerformed
+
+    private void mnNewProjActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnNewProjActionPerformed
+        InputProjectPage inputProject = new InputProjectPage(this);
+        HomeDesktopPane.add(inputProject);
+        inputProject.setVisible(true);
+    }//GEN-LAST:event_mnNewProjActionPerformed
+
+    private void AboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutActionPerformed
+        
+    }//GEN-LAST:event_AboutActionPerformed
+
+    private void AboutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AboutMouseClicked
+        AboutInternalFrame about = new AboutInternalFrame();
+        HomeDesktopPane.add(about);
+        about.setVisible(true);
+    }//GEN-LAST:event_AboutMouseClicked
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new HomePage().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu About;
+    private javax.swing.JPanel DefaultPane;
+    private javax.swing.JMenu File;
+    private javax.swing.JDesktopPane HomeDesktopPane;
+    private javax.swing.JScrollPane HomeScrollPanel;
+    private javax.swing.JTree HomeSideBar;
+    private javax.swing.JPanel MainPane;
+    private javax.swing.JPanel ProjectPane;
+    private javax.swing.JScrollPane ProjectScrollPane;
+    private javax.swing.JPanel RightPane;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JMenuItem mnLogOut;
+    private javax.swing.JMenuItem mnNewProj;
+    private javax.swing.JCheckBoxMenuItem mnSaveLog;
+    private javax.swing.JLabel tvDescription;
+    private javax.swing.JLabel tvNewProject;
+    private javax.swing.JLabel tvOnBoarding;
+    // End of variables declaration//GEN-END:variables
+}
